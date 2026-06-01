@@ -22,6 +22,11 @@ data "aws_subnets" "public" {
   }
 }
 
+resource "aws_key_pair" "this" {
+  key_name   = "aws-load-balancer"
+  public_key = var.public_key
+}
+
 resource "aws_security_group" "load_balancer" {
   name        = "load_balancer"
   description = "Allow all outbound traffic and inbound traffic on ports 80, 443, and 22"
@@ -67,7 +72,7 @@ module "ec2_instance" {
   version = "6.4.0"
 
   instance_type               = var.instance_type
-  key_name                    = var.key_name
+  key_name                    = aws_key_pair.this.key_name
   name                        = "load-balancer"
   ami                         = data.aws_ami.load_balancer.id
   subnet_id                   = data.aws_subnets.public.ids[0]
