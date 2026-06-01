@@ -11,12 +11,12 @@ systemctl start docker
 systemctl enable docker
 
 # Start web server containers
-for i in $$(seq 1 $$WEB_SERVER_COUNT); do
-  PORT=$$((BASE_PORT + i))
+for i in $(seq 1 $WEB_SERVER_COUNT); do
+  PORT=$((BASE_PORT + i))
   docker run -d \
-    --name "webserver-$$i" \
+    --name "webserver-$i" \
     --restart unless-stopped \
-    -p "$$PORT:80" \
+    -p "$PORT:80" \
     nginx
 done
 
@@ -25,9 +25,9 @@ done
   echo "events {}"
   echo "http {"
   echo "  upstream webservers {"
-  for i in $$(seq 1 $$WEB_SERVER_COUNT); do
-    PORT=$$((BASE_PORT + i))
-    echo "    server 127.0.0.1:$$PORT;"
+  for i in $(seq 1 $WEB_SERVER_COUNT); do
+    PORT=$((BASE_PORT + i))
+    echo "    server 127.0.0.1:$PORT;"
   done
   echo "  }"
   echo "  server {"
