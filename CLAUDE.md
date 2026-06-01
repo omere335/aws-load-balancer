@@ -8,7 +8,7 @@ Provision a Docker-based cluster on an AWS EC2 instance using Terraform. The clu
 
 ## Bootstrap (one-time, before first use)
 
-The S3 bucket and DynamoDB table used for remote state must exist before running `terraform init` in the root. Provision them once from the `bootstrap/` directory:
+The S3 bucket used for remote state must exist before running `terraform init` in the root. Provision it once from the `bootstrap/` directory:
 
 ```bash
 cd bootstrap
@@ -65,7 +65,7 @@ Variables with defaults:
 
 ## Architecture
 
-**Providers & versions** — `terraform.tf` pins Terraform `>= 1.2` and AWS provider `~> 6.37`. Remote state is stored in S3 (`aws-load-balancer-terraform-state`) with DynamoDB locking (`terraform-state-lock`), both in `il-central-1`.
+**Providers & versions** — `terraform.tf` pins Terraform `>= 1.10` and AWS provider `~> 6.37`. Remote state is stored in S3 (`aws-load-balancer-terraform-state`) with S3 native locking (`use_lockfile = true`), in `il-central-1`.
 
 **EC2 instance** — `main.tf` uses the `terraform-aws-modules/ec2-instance/aws` module (v6.4.0). The AMI is resolved via a `data.aws_ami` filter for the latest Amazon Linux 2023 (`al2023-ami-*-x86_64`). The subnet is resolved dynamically via `data.aws_subnets` filtering by `var.vpc_id` for subnets with `map-public-ip-on-launch = true`.
 
