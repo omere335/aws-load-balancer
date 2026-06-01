@@ -6,6 +6,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Provision a Docker-based cluster on an AWS EC2 instance using Terraform. The cluster consists of multiple nginx web server containers behind a round-robin nginx load balancer, each accessible via a `/health` endpoint.
 
+## Bootstrap (one-time, before first use)
+
+The S3 bucket and DynamoDB table used for remote state must exist before running `terraform init` in the root. Provision them once from the `bootstrap/` directory:
+
+```bash
+cd bootstrap
+terraform init
+terraform apply
+cd ..
+```
+
+If you already have local state to migrate, run `terraform init -migrate-state` instead of plain `terraform init` in the root after bootstrapping.
+
 ## Common Commands
 
 ```bash
@@ -50,7 +63,7 @@ Variables with defaults:
 
 ## Architecture
 
-**Providers & versions** — `terraform.tf` pins Terraform `>= 1.2` and AWS provider `~> 6.37`. No remote state backend is configured; state is stored locally.
+**Providers & versions** — `terraform.tf` pins Terraform `>= 1.2` and AWS provider `~> 6.37`. Remote state is stored in S3 (`aws-load-balancer-terraform-state`) with DynamoDB locking (`terraform-state-lock`), both in `il-central-1`.
 
 **EC2 instance** — `main.tf` uses the `terraform-aws-modules/ec2-instance/aws` module (v6.4.0). The AMI is resolved via a `data.aws_ami` filter for the latest Amazon Linux 2 (`amzn2-ami-hvm-*-x86_64-gp2`). The subnet is resolved dynamically via `data.aws_subnets` filtering by `var.vpc_id` for subnets with `map-public-ip-on-launch = true`.
 
