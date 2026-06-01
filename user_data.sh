@@ -5,8 +5,8 @@ WEB_SERVER_COUNT=${web_server_count}
 BASE_PORT=8000
 
 # Install Docker
-yum update -y
-yum install -y docker
+dnf update -y
+dnf install -y docker
 systemctl start docker
 systemctl enable docker
 
