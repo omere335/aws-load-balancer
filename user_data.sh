@@ -11,32 +11,48 @@ systemctl start docker
 systemctl enable docker
 
 # Start web server containers
-for i in $$(seq 1 $$WEB_SERVER_COUNT); do
-  PORT=$$((BASE_PORT + i))
+for i in $(seq 1 $WEB_SERVER_COUNT); do
+  PORT=$((BASE_PORT + i))
+  cat > /tmp/nginx-ws-$i.conf << EOF
+server {
+  listen 80;
+  location / {
+    root /usr/share/nginx/html;
+    index index.html;
+  }
+  location /health {
+    return 200 "healthy - port $PORT\n";
+    add_header Content-Type text/plain;
+  }
+}
+EOF
   docker run -d \
-    --name "webserver-$$i" \
+    --name "webserver-$i" \
     --restart unless-stopped \
-    -p "$$PORT:80" \
+    -p "$PORT:80" \
+    -v /tmp/nginx-ws-$i.conf:/etc/nginx/conf.d/default.conf:ro \
     nginx
 done
 
 # Generate nginx load balancer config
-{
-  echo "events {}"
-  echo "http {"
-  echo "  upstream webservers {"
-  for i in $$(seq 1 $$WEB_SERVER_COUNT); do
-    PORT=$$((BASE_PORT + i))
-    echo "    server 127.0.0.1:$$PORT;"
-  done
-  echo "  }"
-  echo "  server {"
-  echo "    listen 80;"
-  echo "    location / { proxy_pass http://webservers; }"
-  echo "    location /health { proxy_pass http://webservers; }"
-  echo "  }"
-  echo "}"
-} > /tmp/nginx-lb.conf
+UPSTREAM_SERVERS=""
+for i in $(seq 1 $WEB_SERVER_COUNT); do
+  PORT=$((BASE_PORT + i))
+  UPSTREAM_SERVERS="$UPSTREAM_SERVERS    server 127.0.0.1:$PORT;"$'\n'
+done
+
+cat > /tmp/nginx-lb.conf << EOF
+events {}
+http {
+  upstream webservers {
+$UPSTREAM_SERVERS  }
+  server {
+    listen 80;
+    location / { proxy_pass http://webservers; }
+    location /health { proxy_pass http://webservers; }
+  }
+}
+EOF
 
 # Start load balancer
 docker run -d \
