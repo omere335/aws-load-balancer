@@ -82,6 +82,7 @@ module "ec2_instance" {
   user_data = templatefile("${path.module}/user_data.sh", {
     web_server_count = var.web_server_count
   })
+  user_data_replace_on_change = true
 
   root_block_device = {
     encrypted = true
