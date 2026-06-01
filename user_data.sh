@@ -38,14 +38,14 @@ done
 UPSTREAM_SERVERS=""
 for i in $(seq 1 $WEB_SERVER_COUNT); do
   PORT=$((BASE_PORT + i))
-  UPSTREAM_SERVERS="${UPSTREAM_SERVERS}    server 127.0.0.1:${PORT};"$'\n'
+  UPSTREAM_SERVERS="$UPSTREAM_SERVERS    server 127.0.0.1:$PORT;"$'\n'
 done
 
 cat > /tmp/nginx-lb.conf << EOF
 events {}
 http {
   upstream webservers {
-${UPSTREAM_SERVERS}  }
+$UPSTREAM_SERVERS  }
   server {
     listen 80;
     location / { proxy_pass http://webservers; }
