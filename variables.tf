@@ -10,8 +10,8 @@ variable "instance_type" {
   default     = "t3.micro"
 }
 
-variable "key_name" {
-  description = "Name of the AWS key pair for SSH access"
+variable "public_key" {
+  description = "Public key material for the EC2 key pair (contents of .pub file)"
   type        = string
 }
 

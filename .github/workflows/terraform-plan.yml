@@ -33,7 +33,7 @@ jobs:
         continue-on-error: true
         run: |
           terraform plan -no-color \
-            -var="key_name=${{ secrets.TF_VAR_KEY_NAME }}" \
+            -var="public_key=${{ secrets.TF_VAR_PUBLIC_KEY }}" \
             -var="ssh_allowed_cidr=${{ secrets.TF_VAR_SSH_ALLOWED_CIDR }}" \
             2>&1 | tee plan_output.txt
           echo "exitcode=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"

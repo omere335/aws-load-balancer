@@ -29,5 +29,5 @@ jobs:
       - name: Terraform Apply
         run: |
           terraform apply -auto-approve \
-            -var="key_name=${{ secrets.TF_VAR_KEY_NAME }}" \
+            -var="public_key=${{ secrets.TF_VAR_PUBLIC_KEY }}" \
             -var="ssh_allowed_cidr=${{ secrets.TF_VAR_SSH_ALLOWED_CIDR }}"
