@@ -7,7 +7,7 @@ data "aws_ami" "load_balancer" {
   owners      = ["amazon"]
   filter {
     name   = "name"
-    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+    values = ["al2023-ami-*-x86_64"]
   }
 }
 
