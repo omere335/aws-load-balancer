@@ -1,5 +1,7 @@
 # aws-load-balancer
 
+> **Hands-on learning project.** Practicing AWS infrastructure provisioning with Terraform and a GitHub Actions CI/CD pipeline.
+
 Provision a Docker-based web cluster on a single AWS EC2 instance using Terraform. The instance boots a configurable number of nginx web server containers behind a round-robin nginx load balancer, each reachable through a `/health` endpoint.
 
 ## Architecture
